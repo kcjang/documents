@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Documentation Hub</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin: 10px 0;
+        }
+        a {
+            text-decoration: none;
+            color: #007bff;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .content {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tech Documentation Hub</h1>
+    <ul id="file-list">
+        <!-- Markdown files will be listed here -->
+    </ul>
+    <div class="content" id="content">
+        <!-- Selected file content will be displayed here -->
+    </div>
+
+    <script>
+        // Replace 'username' and 'repository' with your GitHub username and repository name
+        const username = 'username';
+        const repository = 'repository';
+        const apiURL = `https://api.github.com/repos/${username}/${repository}/contents`;
+
+        async function fetchFiles() {
+            const response = await fetch(apiURL);
+            const files = await response.json();
+            const mdFiles = files.filter(file => file.name.endsWith('.md'));
+            const fileList = document.getElementById('file-list');
+
+            mdFiles.forEach(file => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = '#';
+                a.textContent = file.name;
+                a.onclick = () => fetchFileContent(file.path);
+                li.appendChild(a);
+                fileList.appendChild(li);
+            });
+        }
+
+        async function fetchFileContent(path) {
+            const response = await fetch(`${apiURL}/${path}`);
+            const file = await response.json();
+            const content = atob(file.content);
+            document.getElementById('content').textContent = content;
+        }
+
+        fetchFiles();
+    </script>
+</body>
+</html>
+
